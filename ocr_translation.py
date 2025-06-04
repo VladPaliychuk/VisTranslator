@@ -8,7 +8,7 @@ try:
 except ImportError:
     raise ImportError("The SentencePiece library is required but not installed. Install it using 'pip install sentencepiece'.")
 
-pytesseract.pytesseract.tesseract_cmd = r'D:\Learning\Tesseract\tesseract.exe'
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 model_name = 'Helsinki-NLP/opus-mt-en-uk'
 tokenizer = MarianTokenizer.from_pretrained(model_name)

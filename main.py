@@ -4,7 +4,7 @@ import keyboard
 import threading
 import os
 
-from ocr_translation import ocr_extract_text, ocr_and_translate
+from ocr_translation import ocr_extract_text, ocr_and_translate, remove_newlines_and_structures
 from screenshot import ScreenshotApp
 from settings import load_hotkey, open_settings
 import pystray
@@ -62,49 +62,80 @@ class ScreenshotAppWithHotkey:
     def show_text_window(self, text, translated_text):
         self.text_window = tk.Toplevel(self.root)
         self.text_window.title("Розпізнаний текст")
-
         self.text_window.attributes("-topmost", True)
 
         x, y = self.root.winfo_pointerxy()
         self.text_window.geometry(f"+{x + 10}+{y + 10}")
 
-        original_label = tk.Label(self.text_window, text="Оригінал:", font=("Arial", 10, "bold"))
+        self.text_window.configure(bg="#2f3136", highlightthickness=1, highlightbackground="#8B4513")
+
+        style_label = {"font": ("Arial", 10, "bold"), "bg": "#2f3136", "fg": "white"}
+
+        original_label = tk.Label(self.text_window, text="Оригінал:", **style_label)
         original_label.pack(padx=5, pady=(5, 0))
 
+        # Textbox style
         self.original_textbox = tk.Text(
-            self.text_window, wrap=tk.WORD, height=10, width=60, font=("Arial", 10), bd=0, bg="#f4f4f4"
+            self.text_window,
+            wrap=tk.WORD,
+            height=10,
+            width=60,
+            font=("Arial", 10),
+            bd=0,
+            bg="#36393f",
+            fg="white",
+            insertbackground="white"
         )
+        text = remove_newlines_and_structures(text)
         self.original_textbox.insert("1.0", text)
         self.original_textbox.pack(fill="both", padx=5, pady=5)
         self.original_textbox.config(state=tk.DISABLED)
 
-        translated_label = tk.Label(self.text_window, text="Переклад:", font=("Arial", 10, "bold"))
+        translated_label = tk.Label(self.text_window, text="Переклад:", **style_label)
         translated_label.pack(padx=5, pady=(5, 0))
 
         self.translated_textbox = tk.Text(
-            self.text_window, wrap=tk.WORD, height=10, width=60, font=("Arial", 10), bd=0, bg="#f4f4f4"
+            self.text_window,
+            wrap=tk.WORD,
+            height=10,
+            width=60,
+            font=("Arial", 10),
+            bd=0,
+            bg="#36393f",
+            fg="white",
+            insertbackground="white"
         )
         self.translated_textbox.insert("1.0", translated_text)
         self.translated_textbox.pack(fill="both", padx=5, pady=5)
         self.translated_textbox.config(state=tk.DISABLED)
 
-        button_frame = tk.Frame(self.text_window)
+        # Button frame
+        button_frame = tk.Frame(self.text_window, bg="#2f3136")
         button_frame.pack(fill="x", padx=5, pady=5)
 
         copy_original_button = tk.Button(
-            button_frame, text="Копіювати оригінал", command=self.copy_to_clipboard,
-            relief="flat", bg="#e0e0e0", font=("Arial", 9)
+            button_frame,
+            text="Копіювати оригінал",
+            command=self.copy_to_clipboard,
+            relief="flat",
+            bg="#4f545c",
+            fg="white",
+            font=("Arial", 9)
         )
         copy_original_button.pack(side="left", padx=5)
 
         copy_translated_button = tk.Button(
-            button_frame, text="Копіювати переклад", command=self.copy_translated_to_clipboard,
-            relief="flat", bg="#e0e0e0", font=("Arial", 9)
+            button_frame,
+            text="Копіювати переклад",
+            command=self.copy_translated_to_clipboard,
+            relief="flat",
+            bg="#4f545c",
+            fg="white",
+            font=("Arial", 9)
         )
         copy_translated_button.pack(side="left", padx=5)
 
-        min_width, min_height = 650, 400
-        self.text_window.minsize(min_width, min_height)
+        self.text_window.minsize(650, 400)
 
     def update_text_window(self, translated_text):
         self.translated_textbox.config(state=tk.NORMAL)
