@@ -67,12 +67,16 @@ class ScreenshotAppWithHotkey:
         x, y = self.root.winfo_pointerxy()
         self.text_window.geometry(f"+{x + 10}+{y + 10}")
 
-        self.text_window.configure(bg="#2f3136", highlightthickness=1, highlightbackground="#8B4513")
+        self.text_window.configure(bg="#1e1f22", highlightthickness=1, highlightbackground="#8B4513")
 
-        style_label = {"font": ("Arial", 10, "bold"), "bg": "#2f3136", "fg": "white"}
+        style_label = {"font": ("Arial", 10, "bold"), "bg": "#1e1f22", "fg": "#ffffff"}
 
-        original_label = tk.Label(self.text_window, text="Оригінал:", **style_label)
-        original_label.pack(padx=5, pady=(5, 0))
+        # Original text section
+        original_frame = tk.Frame(self.text_window, bg="#1e1f22")
+        original_frame.pack(fill="x", padx=5, pady=(5, 0))
+
+        original_label = tk.Label(original_frame, text="Оригінал:", **style_label)
+        original_label.pack(side="left", padx=5)
 
         # Textbox style
         self.original_textbox = tk.Text(
@@ -81,18 +85,27 @@ class ScreenshotAppWithHotkey:
             height=10,
             width=60,
             font=("Arial", 10),
-            bd=0,
-            bg="#36393f",
-            fg="white",
-            insertbackground="white"
+            bd=1,
+            bg="#2b2d31",
+            fg="#ffffff",
+            insertbackground="white",
+            highlightthickness=1,
+            highlightbackground="#8B4513",
+            relief="solid",
+            cursor="hand2"
         )
         text = remove_newlines_and_structures(text)
         self.original_textbox.insert("1.0", text)
         self.original_textbox.pack(fill="both", padx=5, pady=5)
         self.original_textbox.config(state=tk.DISABLED)
+        self.original_textbox.bind("<Button-1>", lambda e: self.copy_to_clipboard())
 
-        translated_label = tk.Label(self.text_window, text="Переклад:", **style_label)
-        translated_label.pack(padx=5, pady=(5, 0))
+        # Translated text section
+        translated_frame = tk.Frame(self.text_window, bg="#1e1f22")
+        translated_frame.pack(fill="x", padx=5, pady=(5, 0))
+
+        translated_label = tk.Label(translated_frame, text="Переклад:", **style_label)
+        translated_label.pack(side="left", padx=5)
 
         self.translated_textbox = tk.Text(
             self.text_window,
@@ -100,40 +113,19 @@ class ScreenshotAppWithHotkey:
             height=10,
             width=60,
             font=("Arial", 10),
-            bd=0,
-            bg="#36393f",
-            fg="white",
-            insertbackground="white"
+            bd=1,
+            bg="#2b2d31",
+            fg="#ffffff",
+            insertbackground="white",
+            highlightthickness=1,
+            highlightbackground="#8B4513",
+            relief="solid",
+            cursor="hand2"
         )
         self.translated_textbox.insert("1.0", translated_text)
         self.translated_textbox.pack(fill="both", padx=5, pady=5)
         self.translated_textbox.config(state=tk.DISABLED)
-
-        # Button frame
-        button_frame = tk.Frame(self.text_window, bg="#2f3136")
-        button_frame.pack(fill="x", padx=5, pady=5)
-
-        copy_original_button = tk.Button(
-            button_frame,
-            text="Копіювати оригінал",
-            command=self.copy_to_clipboard,
-            relief="flat",
-            bg="#4f545c",
-            fg="white",
-            font=("Arial", 9)
-        )
-        copy_original_button.pack(side="left", padx=5)
-
-        copy_translated_button = tk.Button(
-            button_frame,
-            text="Копіювати переклад",
-            command=self.copy_translated_to_clipboard,
-            relief="flat",
-            bg="#4f545c",
-            fg="white",
-            font=("Arial", 9)
-        )
-        copy_translated_button.pack(side="left", padx=5)
+        self.translated_textbox.bind("<Button-1>", lambda e: self.copy_translated_to_clipboard())
 
         self.text_window.minsize(650, 400)
 
