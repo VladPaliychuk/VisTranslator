@@ -1,7 +1,8 @@
 ﻿import pytesseract
 from PIL import Image
-from transformers import TFMarianMTModel, MarianTokenizer
+from transformers import MarianMTModel, MarianTokenizer
 import tkinter as tk
+import torch
 
 try:
     import sentencepiece
@@ -12,7 +13,12 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 
 model_name = 'Helsinki-NLP/opus-mt-en-uk'
 tokenizer = MarianTokenizer.from_pretrained(model_name)
-model = TFMarianMTModel.from_pretrained(model_name)
+model = MarianMTModel.from_pretrained(model_name)
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model.load_state_dict(torch.load("Fine-tuning/fine_tuned_weights.pth", map_location=device))
+model.to(device)
+model.eval()
 
 def ocr_extract_text(image_path, lang='eng'):
     image = Image.open(image_path)
@@ -48,7 +54,7 @@ def translate_text(text, dest_language="uk"):
         for sentence in sentences:
             sentence = sentence.strip()
             if sentence:
-                inputs = tokenizer(sentence, return_tensors="tf", padding=True, truncation=True)
+                inputs = tokenizer(sentence, return_tensors="pt", padding=True, truncation=True).to(device)
                 translated_tokens = model.generate(**inputs)
                 translated_text = tokenizer.decode(translated_tokens[0], skip_special_tokens=True)
                 translated_sentences.append(translated_text)
