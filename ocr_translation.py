@@ -12,6 +12,9 @@ except ImportError:
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 model_name = 'Helsinki-NLP/opus-mt-en-uk'
+#tokenizer = MarianTokenizer.from_pretrained(model_name)
+#model = MarianMTModel.from_pretrained(model_name)
+
 tokenizer = MarianTokenizer.from_pretrained('./local_model')
 model = MarianMTModel.from_pretrained('./local_model')
 
