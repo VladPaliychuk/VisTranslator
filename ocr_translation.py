@@ -12,8 +12,8 @@ except ImportError:
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 model_name = 'Helsinki-NLP/opus-mt-en-uk'
-tokenizer = MarianTokenizer.from_pretrained(model_name)
-model = MarianMTModel.from_pretrained(model_name)
+tokenizer = MarianTokenizer.from_pretrained('./local_model')
+model = MarianMTModel.from_pretrained('./local_model')
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.load_state_dict(torch.load("Fine-tuning/fine_tuned_weights.pth", map_location=device))
